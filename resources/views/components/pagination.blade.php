@@ -1,0 +1,2 @@
+@props(['paginator'])
+{{ $paginator->links() }}

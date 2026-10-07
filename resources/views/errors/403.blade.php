@@ -1,0 +1,1 @@
+@include('errors.layout', ['code' => '403', 'heading' => __('You do not have access to this page'), 'text' => (isset($exception) && $exception->getMessage() && $exception->getMessage() !== 'This action is unauthorized.') ? $exception->getMessage() : __('Your role does not include this area. Ask a workspace administrator if you need it.')])

@@ -1,0 +1,261 @@
+@import 'tailwindcss';
+
+@source '../views';
+@source '../js';
+@source '../../storage/framework/views/*.php';
+
+/* Dark mode is switched with a class on <html>, so the user can choose Light / Dark / System. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Colours are semantic (surface, ink, line, brand ...) and resolve to CSS
+   variables, so light/dark themes and a workspace's own brand colour only
+   need to change the variables below.
+   Spacing follows an 8px rhythm: use Tailwind steps 2, 4, 6, 8 (8/16/24/32px).
+--------------------------------------------------------------------------- */
+@theme inline {
+    --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Arabic', 'Noto Nastaliq Urdu', sans-serif;
+    --font-serif: 'IBM Plex Serif', ui-serif, Georgia, serif;
+
+    --color-canvas: var(--c-canvas);
+    --color-surface: var(--c-surface);
+    --color-raised: var(--c-raised);
+    --color-ink: var(--c-ink);
+    --color-muted: var(--c-muted);
+    --color-line: var(--c-line);
+    --color-brand: var(--c-brand);
+    --color-brand-strong: var(--c-brand-strong);
+    --color-brand-soft: var(--c-brand-soft);
+    --color-on-brand: var(--c-on-brand);
+    --color-danger: var(--c-danger);
+    --color-danger-soft: var(--c-danger-soft);
+    --color-warn: var(--c-warn);
+    --color-warn-soft: var(--c-warn-soft);
+    --color-info: var(--c-info);
+    --color-info-soft: var(--c-info-soft);
+    --color-ok: var(--c-ok);
+    --color-ok-soft: var(--c-ok-soft);
+}
+
+:root {
+    --c-canvas: #f2f5f3;
+    --c-surface: #ffffff;
+    --c-raised: #f7f9f8;
+    --c-ink: #14211c;
+    --c-muted: #55655e;
+    --c-line: #d9e0dc;
+    --c-brand: #0f6b4f;
+    --c-brand-strong: #0a5540;
+    --c-brand-soft: #e2f0ea;
+    --c-on-brand: #ffffff;
+    --c-danger: #b42318;
+    --c-danger-soft: #fcebe9;
+    --c-warn: #8a5a00;
+    --c-warn-soft: #fff3d1;
+    --c-info: #1a5a9e;
+    --c-info-soft: #e5eff9;
+    --c-ok: #156b40;
+    --c-ok-soft: #e1f3e8;
+    color-scheme: light;
+}
+
+.dark {
+    --c-canvas: #0e1512;
+    --c-surface: #151e1a;
+    --c-raised: #1b2621;
+    --c-ink: #e8efeb;
+    --c-muted: #9bada5;
+    --c-line: #2a3832;
+    --c-brand: #4cc79d;
+    --c-brand-strong: #6fd6b1;
+    --c-brand-soft: #173329;
+    --c-on-brand: #06231a;
+    --c-danger: #ff8a7d;
+    --c-danger-soft: #3a1c19;
+    --c-warn: #f0c15a;
+    --c-warn-soft: #382c10;
+    --c-info: #8bbcf0;
+    --c-info-soft: #172a3f;
+    --c-ok: #6fd69a;
+    --c-ok-soft: #163324;
+    color-scheme: dark;
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-canvas text-ink font-sans text-[0.9375rem] leading-6 antialiased;
+    }
+
+    /* Visible keyboard focus everywhere */
+    :focus-visible {
+        outline: 2px solid var(--c-brand);
+        outline-offset: 2px;
+    }
+
+    ::selection {
+        background: var(--c-brand-soft);
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    /* ---- Typography ---- */
+    .h1 { @apply text-2xl font-semibold tracking-tight text-ink; }
+    .h2 { @apply text-lg font-semibold text-ink; }
+    .h3 { @apply text-base font-semibold text-ink; }
+    .caption { @apply text-xs text-muted; }
+    .num { font-variant-numeric: tabular-nums; }
+    .link { @apply text-brand underline decoration-brand/40 underline-offset-2 hover:decoration-brand; }
+
+    /* ---- Buttons ---- */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-md border border-transparent px-4 py-2 text-sm font-medium
+            whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+    }
+    .btn-primary { @apply bg-brand text-on-brand hover:bg-brand-strong; }
+    .btn-secondary { @apply border-line bg-surface text-ink hover:bg-raised; }
+    .btn-ghost { @apply text-muted hover:bg-raised hover:text-ink; }
+    .btn-danger { @apply border-danger/40 bg-surface text-danger hover:bg-danger-soft; }
+    .btn-sm { @apply px-3 py-1.5 text-[0.8125rem]; }
+    .btn-icon { @apply h-9 w-9 p-0; }
+    .btn[data-loading] { @apply pointer-events-none opacity-70; }
+    .btn[data-loading]::before {
+        content: '';
+        @apply h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent;
+    }
+
+    /* ---- Forms ---- */
+    .label { @apply mb-1 block text-sm font-medium text-ink; }
+    .input {
+        @apply block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted/70
+            focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25 disabled:bg-raised disabled:text-muted;
+    }
+    select.input { @apply pe-8; }
+    textarea.input { @apply min-h-24; }
+    .input-error { @apply border-danger focus:border-danger focus:ring-danger/25; }
+    .field-error { @apply mt-1 text-[0.8125rem] text-danger; }
+    .field-hint { @apply mt-1 text-[0.8125rem] text-muted; }
+    .check { @apply h-4 w-4 rounded border-line text-brand accent-[var(--c-brand)]; }
+
+    .switch { @apply relative inline-flex cursor-pointer items-center gap-3; }
+    .switch input { @apply sr-only; }
+    .switch-track { @apply h-6 w-10 shrink-0 rounded-full bg-line transition-colors; }
+    .switch-track::after {
+        content: '';
+        @apply absolute start-0.5 top-0.5 h-5 w-5 rounded-full bg-surface shadow-sm transition-transform;
+    }
+    .switch input:checked + .switch-track { @apply bg-brand; }
+    .switch input:checked + .switch-track::after { @apply translate-x-4 rtl:-translate-x-4; }
+    .switch input:focus-visible + .switch-track { outline: 2px solid var(--c-brand); outline-offset: 2px; }
+
+    /* ---- Surfaces ---- */
+    .card { @apply rounded-lg border border-line bg-surface; }
+    .card-pad { @apply p-4 sm:p-6; }
+    .card-head { @apply flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3 sm:px-6; }
+
+    /* ---- Badges ---- */
+    .badge { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap; }
+    .badge-neutral { @apply bg-raised text-muted ring-1 ring-line ring-inset; }
+    .badge-ok { @apply bg-ok-soft text-ok; }
+    .badge-warn { @apply bg-warn-soft text-warn; }
+    .badge-danger { @apply bg-danger-soft text-danger; }
+    .badge-info { @apply bg-info-soft text-info; }
+    .badge-brand { @apply bg-brand-soft text-brand; }
+
+    /* ---- Alerts ---- */
+    .alert { @apply flex items-start gap-3 rounded-md border px-4 py-3 text-sm; }
+    .alert-ok { @apply border-ok/30 bg-ok-soft text-ok; }
+    .alert-danger { @apply border-danger/30 bg-danger-soft text-danger; }
+    .alert-warn { @apply border-warn/30 bg-warn-soft text-warn; }
+    .alert-info { @apply border-info/30 bg-info-soft text-info; }
+
+    /* ---- Tables ---- */
+    .table { @apply w-full border-collapse text-sm; }
+    .table th { @apply border-b border-line px-4 py-2.5 text-start text-xs font-medium text-muted; }
+    .table td { @apply border-b border-line px-4 py-3 align-middle; }
+    .table tbody tr:last-child td { @apply border-b-0; }
+    .table tbody tr:hover { @apply bg-raised/60; }
+    .table .text-end { text-align: end; }
+
+    /* On phones a table becomes a list of labelled rows instead of scrolling sideways */
+    @media (max-width: 767px) {
+        .table-stack thead { @apply sr-only; }
+        .table-stack tbody tr { @apply block border-b border-line px-4 py-3; }
+        .table-stack tbody tr:last-child { @apply border-b-0; }
+        .table-stack td { @apply flex items-start justify-between gap-4 border-0 px-0 py-1 text-end; }
+        .table-stack td::before { content: attr(data-label); @apply shrink-0 text-xs font-medium text-muted text-start; }
+        .table-stack td[data-label=''],
+        .table-stack td:not([data-label]) { @apply justify-start text-start; }
+        .table-stack td[data-label='']::before,
+        .table-stack td:not([data-label])::before { content: none; }
+    }
+
+    /* ---- Navigation ---- */
+    .nav-link { @apply flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted hover:bg-raised hover:text-ink; }
+    .nav-link[aria-current='page'] { @apply bg-brand-soft text-brand; }
+    .nav-group { @apply mt-6 mb-1 px-3 text-xs font-medium text-muted/80; }
+    .tab { @apply -mb-px border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted whitespace-nowrap hover:text-ink; }
+    .tab[aria-current='page'] { @apply border-brand text-brand; }
+
+    /* ---- Menus (details / summary) ---- */
+    .menu { @apply relative; }
+    .menu > summary { @apply cursor-pointer list-none; }
+    .menu > summary::-webkit-details-marker { display: none; }
+    .menu-panel { @apply absolute end-0 z-30 mt-2 min-w-48 rounded-md border border-line bg-surface py-1 shadow-lg; }
+    .menu-item { @apply flex w-full items-center gap-2 px-3 py-2 text-start text-sm text-ink hover:bg-raised; }
+    .menu-item-danger { @apply text-danger hover:bg-danger-soft; }
+
+    /* ---- Dialogs ---- */
+    dialog.modal { @apply m-auto w-[min(34rem,calc(100vw-2rem))] rounded-lg border border-line bg-surface p-0 text-ink shadow-2xl; }
+    dialog.modal-wide { @apply w-[min(48rem,calc(100vw-2rem))]; }
+    dialog.modal::backdrop { background: rgb(10 20 16 / 0.55); }
+    dialog.drawer { @apply m-0 h-dvh max-h-none w-72 max-w-[85vw] border-0 border-e border-line bg-surface p-0 text-ink; }
+    dialog.drawer::backdrop { background: rgb(10 20 16 / 0.55); }
+
+    /* ---- Signals: the ledger-margin tick that marks every business signal ---- */
+    .signal { @apply relative ps-5; }
+    .signal::before { content: ''; @apply absolute inset-y-1 start-0 w-1 rounded-full bg-line; }
+    .signal-attention::before { @apply bg-warn; }
+    .signal-risk::before { @apply bg-danger; }
+    .signal-opportunity::before { @apply bg-ok; }
+    .signal-trend::before { @apply bg-info; }
+
+    /* ---- Loading skeleton ---- */
+    .skeleton { @apply animate-pulse rounded-md bg-line/60; }
+
+    /* ---- Toasts ---- */
+    .toast { @apply pointer-events-auto flex items-start gap-3 rounded-md border border-line bg-surface px-4 py-3 text-sm shadow-lg; }
+
+    /* ---- Prose (help articles, legal pages) ---- */
+    .prose-basic { @apply max-w-[70ch] text-base leading-7; }
+    .prose-basic h2 { @apply mt-8 mb-2 text-xl font-semibold; }
+    .prose-basic h3 { @apply mt-6 mb-2 text-lg font-semibold; }
+    .prose-basic p { @apply my-4; }
+    .prose-basic ul { @apply my-4 list-disc ps-6; }
+    .prose-basic ol { @apply my-4 list-decimal ps-6; }
+    .prose-basic a { @apply text-brand underline; }
+    .prose-basic code { @apply rounded bg-raised px-1 py-0.5 text-sm; }
+}
+
+/* Print: only the document, on clean A4 */
+@media print {
+    @page { size: A4; margin: 12mm; }
+    body { background: #fff !important; }
+    .no-print { display: none !important; }
+    .print-sheet { box-shadow: none !important; border: 0 !important; margin: 0 !important; padding: 0 !important; max-width: none !important; }
+}
